@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Water Tracker Widget</title>
+    <style>
+        body {
+            font-family: "Poppins", sans-serif;
+            padding: 20px;
+            background: #f4f8f2;
+            color: #355e3b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .card {
+            display: flex;
+            align-items: center;
+            background: #e8f3e5;
+            border-radius: 18px;
+            padding: 16px 18px;
+            width: 280px;
+            box-shadow: 0 4px 10px rgba(82, 109, 75, 0.18);
+            gap: 14px;
+        }
+
+        .plant {
+            font-size: 60px;
+        }
+
+        button {
+            border: none;
+            background: #6ca96f;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        button:hover {
+            background: #4c7d4f;
+        }
+
+        h2 {
+            font-size: 20px;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        p {
+            margin: 2px 0;
+            font-size: 14.5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- PRACHUU -->
+    <div class="card">
+        <div id="plant1" class="plant">🌱</div>
+        <div>
+            <h2>✨•°Prachuu°•✨</h2>
+            <p id="progress1">0 / 8 cups</p>
+            <button onclick="addWater1()">+1 Glass 💧</button>
+        </div>
+    </div>
+
+    <!-- AARYANN -->
+    <div class="card">
+        <div id="plant2" class="plant">🌱</div>
+        <div>
+            <h2>🍀•Aaryann•🍀</h2>
+            <p id="progress2">0 / 8 cups</p>
+            <button onclick="addWater2()">+1 Glass 💧</button>
+        </div>
+    </div>
+
+    <script type="module">
+        // --------------- FIREBASE ---------------
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, addDoc, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBTecz188T94RYZ8gBb_Fw9zNDN4g5gyvo",
+            authDomain: "prachuu-water-tracker.firebaseapp.com",
+            projectId: "prachuu-water-tracker",
+            storageBucket: "prachuu-water-tracker.firebasestorage.app",
+            messagingSenderId: "14042922344",
+            appId: "1:14042922344:web:190cc14f99c06999f3eadd",
+            measurementId: "G-LS7D01MRE8"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // --------------- STATE ---------------
+        const maxCups = 8;
+        let cups1 = 0;
+        let cups2 = 0;
+
+        const users = ["prachuu", "aaryann"];
+
+        function todayStr() {
+            return new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+        }
+
+        // --------------- UI UPDATE ---------------
+        function update1() {
+            document.getElementById("progress1").textContent = `${cups1} / ${maxCups} cups`;
+            const plant = document.getElementById("plant1");
+            if (cups1 <= 1) plant.textContent = "🌱";
+            else if (cups1 <= 4) plant.textContent = "🌿";
+            else if (cups1 <= 7) plant.textContent = "🌳";
+            else plant.textContent = "🌸";
+        }
+
+        function update2() {
+            document.getElementById("progress2").textContent = `${cups2} / ${maxCups} cups`;
+            const plant = document.getElementById("plant2");
+            if (cups2 <= 1) plant.textContent = "🌱";
+            else if (cups2 <= 4) plant.textContent = "🌿";
+            else if (cups2 <= 7) plant.textContent = "🌳";
+            else plant.textContent = "🌸";
+        }
+
+        // --------------- FIRESTORE FUNCTIONS ---------------
+        async function loadCounts() {
+            for (let i = 0; i < users.length; i++) {
+                const user = users[i];
+                const docRef = doc(db, "users", user, "water", todayStr());
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    if (user === "prachuu") cups1 = docSnap.data().count;
+                    else cups2 = docSnap.data().count;
+                } else {
+                    await setDoc(docRef, { count: 0, date: todayStr() });
+                }
+            }
+            update1();
+            update2();
+        }
+
+        async function saveCount(user, count) {
+            const docRef = doc(db, "users", user, "water", todayStr());
+            await setDoc(docRef, { count: count, date: todayStr() });
+        }
+
+        // --------------- BUTTONS ---------------
+        window.addWater1 = async () => {
+            if (cups1 < maxCups) { cups1++; update1(); await saveCount("prachuu", cups1); }
+        };
+        window.addWater2 = async () => {
+            if (cups2 < maxCups) { cups2++; update2(); await saveCount("aaryann", cups2); }
+        };
+
+        // --------------- DAILY RESET ---------------
+        function scheduleMidnightReset() {
+            const now = new Date();
+            const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 2);
+            const ms = nextMidnight - now;
+            setTimeout(async () => {
+                cups1 = 0;
+                cups2 = 0;
+                await saveCount("prachuu", cups1);
+                await saveCount("aaryann", cups2);
+                update1();
+                update2();
+                scheduleMidnightReset();
+            }, ms);
+        }
+
+        // --------------- INIT ---------------
+        await loadCounts();
+        scheduleMidnightReset();
+
+    </script>
+
+</body>
+
+</html>
