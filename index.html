@@ -67,7 +67,6 @@
       transform: translateY(-2px);
     }
 
-    /* History table */
     .history-wrap {
       width: 90%;
       max-width: 720px;
@@ -95,44 +94,27 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.03);
     }
 
-    /* modern helper buttons */
-    .helper-btn {
-      background: linear-gradient(135deg, #00FFA3, #00B3FF);
-      color: #0c1f18;
-      font-weight: 600;
-      padding: 8px 16px;
-      border-radius: 14px;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
-      transition: all 0.3s ease;
-      font-size: 14px;
+    .helpers {
       display: flex;
+      gap: 8px;
+      margin-top: 8px;
       align-items: center;
-      gap: 6px;
+    }
+
+    .helper-btn {
+      background: transparent;
+      border: 1px solid rgba(232, 255, 231, 0.12);
+      color: #e8ffe7;
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
     }
 
     .helper-btn:hover {
-      transform: translateY(-3px) scale(1.05);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+      background: rgba(232, 255, 231, 0.03);
     }
 
-    .helper-btn:active {
-      transform: translateY(0) scale(0.97);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-    }
-
-    /* helpers container */
-    .helpers {
-      display: flex;
-      gap: 12px;
-      margin-top: 8px;
-      align-items: center;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    /* responsive */
     @media (max-width: 420px) {
       .card {
         width: 92%;
@@ -150,10 +132,10 @@
 
   <!-- PRACHUU -->
   <div class="card">
-    <div id="plant1" class="plant">🌱</div>
+    <div id="plant1" class="plant">☘️</div>
     <div>
       <h2>✨•°Prachuu°•✨</h2>
-      <p id="progress1" class="progressText">0 / 8 glasses</p>
+      <p id="progress1" class="progressText">0 / 14 glasses</p>
       <div class="counter-box">
         <button class="btn" onclick="removeWater1()">−</button>
         <button class="btn" onclick="addWater1()">+</button>
@@ -163,10 +145,10 @@
 
   <!-- AARYANN -->
   <div class="card">
-    <div id="plant2" class="plant">🌱</div>
+    <div id="plant2" class="plant">☘️</div>
     <div>
       <h2>🍀•Aaryann•🍀</h2>
-      <p id="progress2" class="progressText">0 / 8 glasses</p>
+      <p id="progress2" class="progressText">0 / 14 glasses</p>
       <div class="counter-box">
         <button class="btn" onclick="removeWater2()">−</button>
         <button class="btn" onclick="addWater2()">+</button>
@@ -174,23 +156,18 @@
     </div>
   </div>
 
-  <!-- helper buttons for manual testing -->
   <div class="helpers">
-    <button class="helper-btn" onclick="manualSave()">💾 Save Today</button>
-    <button class="helper-btn" onclick="manualSaveAndReset()">🧹 Save & Reset</button>
-    <button class="helper-btn" onclick="loadHistory()">🔄 Refresh History</button>
+    <button class="helper-btn" onclick="manualSave()">Save today (manual)</button>
+    <button class="helper-btn" onclick="manualSaveAndReset()">Save & Reset (manual)</button>
+    <button class="helper-btn" onclick="loadHistory()">Refresh History</button>
   </div>
 
-  <!-- History -->
   <h2 style="color:#e8ffe7; margin-top: 20px;">📅 Water Intake History</h2>
   <div class="history-wrap">
-    <table id="historyTable" aria-live="polite">
-      <!-- populated by JS -->
-    </table>
+    <table id="historyTable" aria-live="polite"></table>
   </div>
 
   <script type="module">
-    // FIREBASE imports (app, auth, firestore helpers)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
     import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
     import {
@@ -204,7 +181,6 @@
       getDocs
     } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-    // ---------- YOUR FIREBASE CONFIG ----------
     const firebaseConfig = {
       apiKey: "AIzaSyBTecz188T94RYZ8gBb_Fw9zNDN4g5gyvo",
       authDomain: "prachuu-water-tracker.firebaseapp.com",
@@ -215,42 +191,36 @@
       measurementId: "G-LS7D01MRE8"
     };
 
-    // initialize
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
+    signInAnonymously(auth).catch(err => console.error("Anonymous sign-in failed:", err));
 
-    // sign in anonymously so security rules requiring auth work
-    signInAnonymously(auth).catch(err => {
-      console.error("Anonymous sign-in failed:", err);
-    });
-
-    // ---------- STATE ----------
-    const maxCups = 8;
+    const maxCups = 14;
     let cups1 = 0, cups2 = 0;
     const users = ["prachuu", "aaryann"];
-    const todayStr = () => new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+    const todayStr = () => new Date().toISOString().split("T")[0];
 
-    // ---------- UI UPDATES ----------
+    function updatePlant(plantEl, cups) {
+      if (cups <= 2) plantEl.textContent = "☘️";
+      else if (cups <= 4) plantEl.textContent = "🌱";
+      else if (cups <= 6) plantEl.textContent = "🌿";
+      else if (cups <= 8) plantEl.textContent = "🪴";
+      else if (cups <= 10) plantEl.textContent = "🌲";
+      else if (cups <= 12) plantEl.textContent = "🌳";
+      else plantEl.textContent = "🌸";
+    }
+
     function update1() {
       document.getElementById("progress1").textContent = `${cups1} / ${maxCups} glasses`;
-      const plant = document.getElementById("plant1");
-      if (cups1 <= 1) plant.textContent = "🌱";
-      else if (cups1 <= 4) plant.textContent = "🌿";
-      else if (cups1 <= 7) plant.textContent = "🌳";
-      else plant.textContent = "🌸";
+      updatePlant(document.getElementById("plant1"), cups1);
     }
 
     function update2() {
       document.getElementById("progress2").textContent = `${cups2} / ${maxCups} glasses`;
-      const plant = document.getElementById("plant2");
-      if (cups2 <= 1) plant.textContent = "🌱";
-      else if (cups2 <= 4) plant.textContent = "🌿";
-      else if (cups2 <= 7) plant.textContent = "🌳";
-      else plant.textContent = "🌸";
+      updatePlant(document.getElementById("plant2"), cups2);
     }
 
-    // ---------- FIRESTORE HELPERS ----------
     async function loadCounts() {
       for (let user of users) {
         try {
@@ -260,7 +230,6 @@
             if (user === "prachuu") cups1 = docSnap.data().count || 0;
             else cups2 = docSnap.data().count || 0;
           } else {
-            // create today's doc with 0
             await setDoc(docRef, { count: 0, date: todayStr() });
           }
         } catch (err) {
@@ -279,7 +248,6 @@
       }
     }
 
-    // save today's snapshot to /history/{YYYY-MM-DD}
     async function saveDailyHistory() {
       try {
         const dateKey = todayStr();
@@ -292,13 +260,11 @@
           completedA: Math.round((cups2 / maxCups) * 100),
           savedAt: new Date().toISOString()
         });
-        console.log("Saved history for", dateKey);
       } catch (err) {
         console.error("saveDailyHistory failed:", err);
       }
     }
 
-    // ---------- HISTORY UI ----------
     async function loadHistory() {
       try {
         const historyRef = collection(db, "history");
@@ -338,54 +304,26 @@
       }
     }
 
-    // ---------- BUTTONS (UI actions) ----------
-    window.addWater1 = async () => {
-      if (cups1 < maxCups) cups1++;
-      update1();
-      await saveCount("prachuu", cups1);
-    };
+    window.addWater1 = async () => { if (cups1 < maxCups) cups1++; update1(); await saveCount("prachuu", cups1); };
+    window.removeWater1 = async () => { if (cups1 > 0) cups1--; update1(); await saveCount("prachuu", cups1); };
+    window.addWater2 = async () => { if (cups2 < maxCups) cups2++; update2(); await saveCount("aaryann", cups2); };
+    window.removeWater2 = async () => { if (cups2 > 0) cups2--; update2(); await saveCount("aaryann", cups2); };
 
-    window.removeWater1 = async () => {
-      if (cups1 > 0) cups1--;
-      update1();
-      await saveCount("prachuu", cups1);
-    };
-
-    window.addWater2 = async () => {
-      if (cups2 < maxCups) cups2++;
-      update2();
-      await saveCount("aaryann", cups2);
-    };
-
-    window.removeWater2 = async () => {
-      if (cups2 > 0) cups2--;
-      update2();
-      await saveCount("aaryann", cups2);
-    };
-
-    // ---------- MIDNIGHT SAVE & RESET ----------
     function scheduleMidnightReset() {
       const now = new Date();
       const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 2);
       const ms = nextMidnight - now;
       setTimeout(async () => {
-        try {
-          await saveDailyHistory();
-          cups1 = 0;
-          cups2 = 0;
-          await saveCount("prachuu", 0);
-          await saveCount("aaryann", 0);
-          update1();
-          update2();
-          await loadHistory();
-        } catch (err) {
-          console.error("Midnight save/reset error:", err);
-        }
+        await saveDailyHistory();
+        cups1 = 0; cups2 = 0;
+        await saveCount("prachuu", 0);
+        await saveCount("aaryann", 0);
+        update1(); update2();
+        await loadHistory();
         scheduleMidnightReset();
       }, ms);
     }
 
-    // ---------- MANUAL TEST HELPERS ----------
     window.manualSaveAndReset = async () => {
       await saveDailyHistory();
       cups1 = 0; cups2 = 0;
@@ -393,16 +331,13 @@
       await saveCount("aaryann", 0);
       update1(); update2();
       await loadHistory();
-      console.log("manualSaveAndReset done");
     };
 
     window.manualSave = async () => {
       await saveDailyHistory();
       await loadHistory();
-      console.log("manualSave done");
     };
 
-    // ---------- INIT: wait for auth then initialize ----------
     async function initAfterAuth() {
       await loadCounts();
       await loadHistory();
