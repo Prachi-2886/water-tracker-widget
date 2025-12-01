@@ -95,26 +95,41 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.03);
     }
 
-    /* small helper buttons row (for manual test) */
-    .helpers {
-      display: flex;
-      gap: 8px;
-      margin-top: 8px;
-      align-items: center;
-    }
-
+    /* modern helper buttons */
     .helper-btn {
-      background: transparent;
-      border: 1px solid rgba(232, 255, 231, 0.12);
-      color: #e8ffe7;
-      padding: 6px 10px;
-      border-radius: 8px;
+      background: linear-gradient(135deg, #00FFA3, #00B3FF);
+      color: #0c1f18;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 14px;
+      border: none;
       cursor: pointer;
-      font-size: 13px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+      transition: all 0.3s ease;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .helper-btn:hover {
-      background: rgba(232, 255, 231, 0.03);
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+    }
+
+    .helper-btn:active {
+      transform: translateY(0) scale(0.97);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    }
+
+    /* helpers container */
+    .helpers {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
     /* responsive */
@@ -123,6 +138,7 @@
         width: 92%;
         padding: 14px;
       }
+
       .plant {
         font-size: 48px;
       }
@@ -160,9 +176,9 @@
 
   <!-- helper buttons for manual testing -->
   <div class="helpers">
-    <button class="helper-btn" onclick="manualSave()">Save today (manual)</button>
-    <button class="helper-btn" onclick="manualSaveAndReset()">Save & Reset (manual)</button>
-    <button class="helper-btn" onclick="loadHistory()">Refresh History</button>
+    <button class="helper-btn" onclick="manualSave()">💾 Save Today</button>
+    <button class="helper-btn" onclick="manualSaveAndReset()">🧹 Save & Reset</button>
+    <button class="helper-btn" onclick="loadHistory()">🔄 Refresh History</button>
   </div>
 
   <!-- History -->
@@ -354,27 +370,17 @@
       const ms = nextMidnight - now;
       setTimeout(async () => {
         try {
-          // Save today's snapshot to history
           await saveDailyHistory();
-
-          // Reset counters
           cups1 = 0;
           cups2 = 0;
-
-          // Update today's current docs (so UI and DB are in sync)
           await saveCount("prachuu", 0);
           await saveCount("aaryann", 0);
-
           update1();
           update2();
-
-          // Refresh the history table
           await loadHistory();
         } catch (err) {
           console.error("Midnight save/reset error:", err);
         }
-
-        // schedule next day's reset
         scheduleMidnightReset();
       }, ms);
     }
@@ -405,10 +411,8 @@
 
     onAuthStateChanged(auth, user => {
       if (user) {
-        // signed in (anonymous)
         initAfterAuth().catch(err => console.error("init failed:", err));
       } else {
-        // Not signed in yet — sign-in attempted above; but we handle gracefully
         console.log("No auth user yet");
       }
     });
