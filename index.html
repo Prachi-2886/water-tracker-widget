@@ -5,10 +5,20 @@
   <meta charset="UTF-8" />
   <title>Water Tracker Widget</title>
   <style>
+    :root{
+      --bg: #0c1f18;
+      --card: #153b2b;
+      --text-soft: #e8ffe7;
+      --white: #ffffff;
+      --accent1: #4dd0e1;
+      --accent2: #00bcd4;
+      --shadow: rgba(2,8,6,0.45);
+    }
+
     body {
       font-family: "Poppins", sans-serif;
       padding: 20px;
-      background: #0c1f18; /* darker blackish green background */
+      background: var(--bg);
       color: white;
       display: flex;
       flex-direction: column;
@@ -19,29 +29,54 @@
     .card {
       display: flex;
       align-items: center;
-      background: #153b2b; /* dark green card */
+      background: var(--card);
       border-radius: 18px;
       padding: 16px 20px;
-      width: 300px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
-      gap: 18px;
+      width: 320px;
+      box-shadow: 0 8px 20px var(--shadow);
+      gap: 16px;
+    }
+
+    /* plant wrapper so we can animate relative to plant */
+    .plant-wrap {
+      width: 72px;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
     }
 
     .plant {
-      font-size: 60px;
+      font-size: 48px;
+      transition: transform 300ms cubic-bezier(.2,.9,.3,1);
+      will-change: transform;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .plant.pop {
+      animation: plantPop 420ms cubic-bezier(.2,.9,.3,1);
+    }
+
+    @keyframes plantPop {
+      0% { transform: scale(1) rotate(0deg); }
+      40% { transform: scale(1.26) rotate(-6deg); }
+      80% { transform: scale(0.98) rotate(2deg); }
+      100% { transform: scale(1) rotate(0deg); }
     }
 
     h2 {
-      font-size: 21px;
+      font-size: 20px;
       margin: 0;
       font-weight: 600;
     }
 
     .progressText {
-      margin: 4px 0 10px;
-      font-size: 19px;
+      margin: 6px 0 10px;
+      font-size: 16px;
       font-weight: 700;
-      color: #e8ffe7;
+      color: var(--text-soft);
     }
 
     .counter-box {
@@ -51,79 +86,144 @@
       gap: 12px;
     }
 
+    /* bubble counter buttons */
     .btn {
       border: none;
-      background: #ffffff; /* white buttons */
-      color: #0c1f18; /* dark text on buttons */
-      font-size: 20px;
-      font-weight: 700;
-      padding: 6px 14px;
-      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(240,240,240,0.94));
+      color: var(--bg);
+      font-size: 22px;
+      font-weight: 800;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
       cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 10px 22px rgba(3,10,8,0.4), inset 0 -6px 12px rgba(0,0,0,0.06);
+      display: inline-grid;
+      place-items: center;
+      transition: transform 220ms cubic-bezier(.2,.9,.3,1), box-shadow 220ms;
     }
 
     .btn:hover {
-      transform: translateY(-2px);
+      transform: translateY(-6px) scale(1.03);
+      box-shadow: 0 14px 28px rgba(3,10,8,0.48), inset 0 -6px 12px rgba(0,0,0,0.05);
     }
 
+    .btn:active {
+      transform: translateY(0) scale(0.96);
+      box-shadow: 0 6px 12px rgba(3,10,8,0.28);
+    }
+
+    /* distinct colors for plus/minus (soft water vibe) */
+    .btn.plus {
+      background: linear-gradient(180deg, #b8f0ff, #7fe6ff);
+      color: #01373b;
+    }
+    .btn.minus {
+      background: linear-gradient(180deg, #ffdede, #ffc6c6);
+      color: #3b0b0b;
+    }
+
+    /* small helper buttons (also bubble-ish but rectangular) */
+    .helpers {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .helper-btn {
+      background: linear-gradient(135deg,#7be9ff,#7fffd4);
+      color: #04231f;
+      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(1,50,50,0.18);
+      transition: transform 200ms, box-shadow 200ms;
+      display:flex;
+      gap:8px;
+      align-items:center;
+      font-size:14px;
+    }
+
+    .helper-btn:hover{ transform: translateY(-4px); box-shadow: 0 12px 28px rgba(1,50,50,0.22); }
+    .helper-btn:active{ transform: translateY(0) scale(0.98); }
+
+    /* History table */
     .history-wrap {
       width: 90%;
-      max-width: 720px;
-      margin-top: 20px;
+      max-width: 820px;
+      margin-top: 16px;
       overflow-x: auto;
     }
 
     #historyTable {
       width: 100%;
       border-collapse: collapse;
-      color: #e8ffe7;
+      color: var(--text-soft);
       font-size: 14px;
+      background: transparent;
     }
 
     #historyTable thead th {
       text-align: center;
-      padding: 10px;
+      padding: 12px;
       font-weight: 700;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
     }
 
     #historyTable tbody td {
       text-align: center;
       padding: 10px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
     }
 
-    .helpers {
-      display: flex;
-      gap: 8px;
-      margin-top: 8px;
-      align-items: center;
+    /* droplet animation (appears near + button, floats up and fades) */
+    .droplet {
+      position: fixed;
+      width: 14px;
+      height: 20px;
+      background: linear-gradient(180deg, #a8f0ff, #00b4ff);
+      border-radius: 50% 50% 45% 45%;
+      transform-origin: center bottom;
+      z-index: 9999;
+      pointer-events: none;
+      box-shadow: 0 6px 12px rgba(0,140,200,0.18);
+      animation: dropletUp 900ms cubic-bezier(.2,.8,.25,1);
     }
 
-    .helper-btn {
-      background: transparent;
-      border: 1px solid rgba(232, 255, 231, 0.12);
-      color: #e8ffe7;
-      padding: 6px 10px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 13px;
+    @keyframes dropletUp {
+      0% { transform: translateY(0) scale(0.9); opacity: 1; filter: blur(0px); }
+      60% { transform: translateY(-36px) scale(1.05) rotate(-8deg); opacity: 0.95; }
+      100% { transform: translateY(-90px) scale(0.8) rotate(-18deg); opacity: 0; filter: blur(2px); }
     }
 
-    .helper-btn:hover {
-      background: rgba(232, 255, 231, 0.03);
+    /* little ripple at plant when droplet 'lands' visually */
+    .ripple {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(0,180,255,0.18);
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) scale(0.2);
+      pointer-events: none;
+      animation: ripplePop 520ms ease-out forwards;
     }
 
+    @keyframes ripplePop {
+      to { transform: translate(-50%, -50%) scale(2.6); opacity: 0; }
+    }
+
+    /* responsive tweaks */
     @media (max-width: 420px) {
-      .card {
-        width: 92%;
-        padding: 14px;
-      }
-
-      .plant {
-        font-size: 48px;
-      }
+      .card { width: 94%; padding: 14px; }
+      .plant { font-size: 38px; }
+      .btn { width: 48px; height: 48px; font-size: 20px; }
     }
   </style>
 </head>
@@ -132,36 +232,42 @@
 
   <!-- PRACHUU -->
   <div class="card">
-    <div id="plant1" class="plant">☘️</div>
+    <div class="plant-wrap">
+      <div id="plant1" class="plant">☘️</div>
+    </div>
     <div>
       <h2>✨•°Prachuu°•✨</h2>
       <p id="progress1" class="progressText">0 / 14 glasses</p>
       <div class="counter-box">
-        <button class="btn" onclick="removeWater1()">−</button>
-        <button class="btn" onclick="addWater1()">+</button>
+        <button class="btn minus" onclick="removeWater1(event)">−</button>
+        <button class="btn plus" onclick="addWater1(event)">+</button>
       </div>
     </div>
   </div>
 
   <!-- AARYANN -->
   <div class="card">
-    <div id="plant2" class="plant">☘️</div>
+    <div class="plant-wrap">
+      <div id="plant2" class="plant">☘️</div>
+    </div>
     <div>
       <h2>🍀•Aaryann•🍀</h2>
       <p id="progress2" class="progressText">0 / 14 glasses</p>
       <div class="counter-box">
-        <button class="btn" onclick="removeWater2()">−</button>
-        <button class="btn" onclick="addWater2()">+</button>
+        <button class="btn minus" onclick="removeWater2(event)">−</button>
+        <button class="btn plus" onclick="addWater2(event)">+</button>
       </div>
     </div>
   </div>
 
+  <!-- helper buttons -->
   <div class="helpers">
-    <button class="helper-btn" onclick="manualSave()">Save today (manual)</button>
-    <button class="helper-btn" onclick="manualSaveAndReset()">Save & Reset (manual)</button>
-    <button class="helper-btn" onclick="loadHistory()">Refresh History</button>
+    <button class="helper-btn" onclick="manualSave()">💾 Save Today</button>
+    <button class="helper-btn" onclick="manualSaveAndReset()">🧹 Save & Reset</button>
+    <button class="helper-btn" onclick="loadHistory()">🔄 Refresh History</button>
   </div>
 
+  <!-- History -->
   <h2 style="color:#e8ffe7; margin-top: 20px;">📅 Water Intake History</h2>
   <div class="history-wrap">
     <table id="historyTable" aria-live="polite"></table>
@@ -194,7 +300,10 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    signInAnonymously(auth).catch(err => console.error("Anonymous sign-in failed:", err));
+
+    signInAnonymously(auth).catch(err => {
+      console.error("Anonymous sign-in failed:", err);
+    });
 
     const maxCups = 14;
     let cups1 = 0, cups2 = 0;
@@ -221,6 +330,50 @@
       updatePlant(document.getElementById("plant2"), cups2);
     }
 
+    /* ---- visual helpers: droplet + ripple + plant pop ---- */
+    function createDropletAtElem(elem) {
+      const rect = elem.getBoundingClientRect();
+      // droplet start near the center-top of the button
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2 - 6;
+
+      const drop = document.createElement('div');
+      drop.className = 'droplet';
+      // place centered on the X coordinate
+      drop.style.left = (x - 7) + 'px';
+      drop.style.top = (y - 10) + 'px';
+      document.body.appendChild(drop);
+
+      // find nearest plant in same card to create ripple/pop
+      // we assume button is inside .card -> pick the card element
+      const card = elem.closest('.card');
+      if (card) {
+        const plantWrap = card.querySelector('.plant-wrap');
+        if (plantWrap) {
+          // create tiny ripple inside plantWrap
+          const ripple = document.createElement('div');
+          ripple.className = 'ripple';
+          plantWrap.appendChild(ripple);
+
+          // quick pop on plant
+          const plant = plantWrap.querySelector('.plant');
+          if (plant) {
+            plant.classList.remove('pop');
+            // force reflow to restart animation
+            void plant.offsetWidth;
+            plant.classList.add('pop');
+          }
+
+          // remove ripple after animation
+          ripple.addEventListener('animationend', () => ripple.remove());
+        }
+      }
+
+      // remove droplet after animation finishes (900ms)
+      drop.addEventListener('animationend', () => drop.remove());
+    }
+
+    /* ---------- FIRESTORE HELPERS ---------- */
     async function loadCounts() {
       for (let user of users) {
         try {
@@ -304,10 +457,39 @@
       }
     }
 
-    window.addWater1 = async () => { if (cups1 < maxCups) cups1++; update1(); await saveCount("prachuu", cups1); };
-    window.removeWater1 = async () => { if (cups1 > 0) cups1--; update1(); await saveCount("prachuu", cups1); };
-    window.addWater2 = async () => { if (cups2 < maxCups) cups2++; update2(); await saveCount("aaryann", cups2); };
-    window.removeWater2 = async () => { if (cups2 > 0) cups2--; update2(); await saveCount("aaryann", cups2); };
+    /* ---------- BUTTON ACTIONS (same logic, added visuals) ---------- */
+    window.addWater1 = async (ev) => {
+      const btn = ev.currentTarget;
+      if (cups1 < maxCups) cups1++;
+      update1();
+      createDropletAtElem(btn);
+      await saveCount("prachuu", cups1);
+    };
+
+    window.removeWater1 = async (ev) => {
+      const btn = ev.currentTarget;
+      if (cups1 > 0) cups1--;
+      update1();
+      // small visual feedback on minus
+      createDropletAtElem(btn);
+      await saveCount("prachuu", cups1);
+    };
+
+    window.addWater2 = async (ev) => {
+      const btn = ev.currentTarget;
+      if (cups2 < maxCups) cups2++;
+      update2();
+      createDropletAtElem(btn);
+      await saveCount("aaryann", cups2);
+    };
+
+    window.removeWater2 = async (ev) => {
+      const btn = ev.currentTarget;
+      if (cups2 > 0) cups2--;
+      update2();
+      createDropletAtElem(btn);
+      await saveCount("aaryann", cups2);
+    };
 
     function scheduleMidnightReset() {
       const now = new Date();
