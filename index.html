@@ -2,187 +2,417 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Water Tracker Widget</title>
-    <style>
-        body {
-            font-family: "Poppins", sans-serif;
-            padding: 20px;
-            background: #0c1f18; /* darker blackish green background */
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 18px;
-        }
+  <meta charset="UTF-8" />
+  <title>Water Tracker Widget</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      padding: 20px;
+      background: #0c1f18; /* darker blackish green background */
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
 
-        .card {
-            display: flex;
-            align-items: center;
-            background: #153b2b; /* dark green card */
-            border-radius: 18px;
-            padding: 16px 20px;
-            width: 300px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
-            gap: 18px;
-        }
+    .card {
+      display: flex;
+      align-items: center;
+      background: #153b2b; /* dark green card */
+      border-radius: 18px;
+      padding: 16px 20px;
+      width: 300px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+      gap: 18px;
+    }
 
-        .plant {
-            font-size: 60px;
-        }
+    .plant {
+      font-size: 60px;
+    }
 
-        h2 {
-            font-size: 21px;
-            margin: 0;
-            font-weight: 600;
-        }
+    h2 {
+      font-size: 21px;
+      margin: 0;
+      font-weight: 600;
+    }
 
-        .progressText {
-            margin: 4px 0 10px;
-            font-size: 19px;
-            font-weight: 700;
-            color: #e8ffe7;
-        }
+    .progressText {
+      margin: 4px 0 10px;
+      font-size: 19px;
+      font-weight: 700;
+      color: #e8ffe7;
+    }
 
-        .counter-box {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-        }
+    .counter-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
 
-        .btn {
-            border: none;
-            background: #0e261d;
-            color: white;
-            font-size: 20px;
-            font-weight: 700;
-            padding: 5px 13px;
-            border-radius: 10px;
-            cursor: pointer;
-        }
+    .btn {
+      border: none;
+      background: #ffffff; /* white buttons */
+      color: #0c1f18; /* dark text on buttons */
+      font-size: 20px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    }
 
-        .btn:hover {
-            background: #0a1b14;
-        }
-    </style>
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    /* History table */
+    .history-wrap {
+      width: 90%;
+      max-width: 720px;
+      margin-top: 20px;
+      overflow-x: auto;
+    }
+
+    #historyTable {
+      width: 100%;
+      border-collapse: collapse;
+      color: #e8ffe7;
+      font-size: 14px;
+    }
+
+    #historyTable thead th {
+      text-align: center;
+      padding: 10px;
+      font-weight: 700;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    #historyTable tbody td {
+      text-align: center;
+      padding: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    /* small helper buttons row (for manual test) */
+    .helpers {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      align-items: center;
+    }
+
+    .helper-btn {
+      background: transparent;
+      border: 1px solid rgba(232, 255, 231, 0.12);
+      color: #e8ffe7;
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .helper-btn:hover {
+      background: rgba(232, 255, 231, 0.03);
+    }
+
+    /* responsive */
+    @media (max-width: 420px) {
+      .card {
+        width: 92%;
+        padding: 14px;
+      }
+      .plant {
+        font-size: 48px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-    <!-- PRACHUU -->
-    <div class="card">
-        <div id="plant1" class="plant">🌱</div>
-        <div>
-            <h2>✨•°Prachuu°•✨</h2>
-            <p id="progress1" class="progressText">0 / 8 glasses</p>
-            <div class="counter-box">
-                <button class="btn" onclick="removeWater1()">−</button>
-                <button class="btn" onclick="addWater1()">+</button>
-            </div>
-        </div>
+  <!-- PRACHUU -->
+  <div class="card">
+    <div id="plant1" class="plant">🌱</div>
+    <div>
+      <h2>✨•°Prachuu°•✨</h2>
+      <p id="progress1" class="progressText">0 / 8 glasses</p>
+      <div class="counter-box">
+        <button class="btn" onclick="removeWater1()">−</button>
+        <button class="btn" onclick="addWater1()">+</button>
+      </div>
     </div>
+  </div>
 
-    <!-- AARYANN -->
-    <div class="card">
-        <div id="plant2" class="plant">🌱</div>
-        <div>
-            <h2>🍀•Aaryann•🍀</h2>
-            <p id="progress2" class="progressText">0 / 8 glasses</p>
-            <div class="counter-box">
-                <button class="btn" onclick="removeWater2()">−</button>
-                <button class="btn" onclick="addWater2()">+</button>
-            </div>
-        </div>
+  <!-- AARYANN -->
+  <div class="card">
+    <div id="plant2" class="plant">🌱</div>
+    <div>
+      <h2>🍀•Aaryann•🍀</h2>
+      <p id="progress2" class="progressText">0 / 8 glasses</p>
+      <div class="counter-box">
+        <button class="btn" onclick="removeWater2()">−</button>
+        <button class="btn" onclick="addWater2()">+</button>
+      </div>
     </div>
+  </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+  <!-- helper buttons for manual testing -->
+  <div class="helpers">
+    <button class="helper-btn" onclick="manualSave()">Save today (manual)</button>
+    <button class="helper-btn" onclick="manualSaveAndReset()">Save & Reset (manual)</button>
+    <button class="helper-btn" onclick="loadHistory()">Refresh History</button>
+  </div>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBTecz188T94RYZ8gBb_Fw9zNDN4g5gyvo",
-            authDomain: "prachuu-water-tracker.firebaseapp.com",
-            projectId: "prachuu-water-tracker",
-            storageBucket: "prachuu-water-tracker.firebasestorage.app",
-            messagingSenderId: "14042922344",
-            appId: "1:14042922344:web:190cc14f99c06999f3eadd",
-            measurementId: "G-LS7D01MRE8"
-        };
+  <!-- History -->
+  <h2 style="color:#e8ffe7; margin-top: 20px;">📅 Water Intake History</h2>
+  <div class="history-wrap">
+    <table id="historyTable" aria-live="polite">
+      <!-- populated by JS -->
+    </table>
+  </div>
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+  <script type="module">
+    // FIREBASE imports (app, auth, firestore helpers)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      setDoc,
+      collection,
+      query,
+      orderBy,
+      getDocs
+    } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-        const maxCups = 8;
-        let cups1 = 0, cups2 = 0;
-        const users = ["prachuu", "aaryann"];
+    // ---------- YOUR FIREBASE CONFIG ----------
+    const firebaseConfig = {
+      apiKey: "AIzaSyBTecz188T94RYZ8gBb_Fw9zNDN4g5gyvo",
+      authDomain: "prachuu-water-tracker.firebaseapp.com",
+      projectId: "prachuu-water-tracker",
+      storageBucket: "prachuu-water-tracker.firebasestorage.app",
+      messagingSenderId: "14042922344",
+      appId: "1:14042922344:web:190cc14f99c06999f3eadd",
+      measurementId: "G-LS7D01MRE8"
+    };
 
-        const todayStr = () => new Date().toISOString().split("T")[0];
+    // initialize
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-        function update1() {
-            document.getElementById("progress1").textContent = `${cups1} / ${maxCups} glasses`;
-            const plant = document.getElementById("plant1");
-            if (cups1 <= 1) plant.textContent = "🌱";
-            else if (cups1 <= 4) plant.textContent = "🌿";
-            else if (cups1 <= 7) plant.textContent = "🌳";
-            else plant.textContent = "🌸";
+    // sign in anonymously so security rules requiring auth work
+    signInAnonymously(auth).catch(err => {
+      console.error("Anonymous sign-in failed:", err);
+    });
+
+    // ---------- STATE ----------
+    const maxCups = 8;
+    let cups1 = 0, cups2 = 0;
+    const users = ["prachuu", "aaryann"];
+    const todayStr = () => new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+
+    // ---------- UI UPDATES ----------
+    function update1() {
+      document.getElementById("progress1").textContent = `${cups1} / ${maxCups} glasses`;
+      const plant = document.getElementById("plant1");
+      if (cups1 <= 1) plant.textContent = "🌱";
+      else if (cups1 <= 4) plant.textContent = "🌿";
+      else if (cups1 <= 7) plant.textContent = "🌳";
+      else plant.textContent = "🌸";
+    }
+
+    function update2() {
+      document.getElementById("progress2").textContent = `${cups2} / ${maxCups} glasses`;
+      const plant = document.getElementById("plant2");
+      if (cups2 <= 1) plant.textContent = "🌱";
+      else if (cups2 <= 4) plant.textContent = "🌿";
+      else if (cups2 <= 7) plant.textContent = "🌳";
+      else plant.textContent = "🌸";
+    }
+
+    // ---------- FIRESTORE HELPERS ----------
+    async function loadCounts() {
+      for (let user of users) {
+        try {
+          const docRef = doc(db, "users", user, "water", todayStr());
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            if (user === "prachuu") cups1 = docSnap.data().count || 0;
+            else cups2 = docSnap.data().count || 0;
+          } else {
+            // create today's doc with 0
+            await setDoc(docRef, { count: 0, date: todayStr() });
+          }
+        } catch (err) {
+          console.error("loadCounts error for", user, err);
+        }
+      }
+      update1(); update2();
+    }
+
+    async function saveCount(user, count) {
+      try {
+        const docRef = doc(db, "users", user, "water", todayStr());
+        await setDoc(docRef, { count: count, date: todayStr() });
+      } catch (err) {
+        console.error("saveCount failed:", err);
+      }
+    }
+
+    // save today's snapshot to /history/{YYYY-MM-DD}
+    async function saveDailyHistory() {
+      try {
+        const dateKey = todayStr();
+        const docRef = doc(db, "history", dateKey);
+        await setDoc(docRef, {
+          date: dateKey,
+          prachuu: cups1,
+          aaryann: cups2,
+          completedP: Math.round((cups1 / maxCups) * 100),
+          completedA: Math.round((cups2 / maxCups) * 100),
+          savedAt: new Date().toISOString()
+        });
+        console.log("Saved history for", dateKey);
+      } catch (err) {
+        console.error("saveDailyHistory failed:", err);
+      }
+    }
+
+    // ---------- HISTORY UI ----------
+    async function loadHistory() {
+      try {
+        const historyRef = collection(db, "history");
+        const q = query(historyRef, orderBy("date", "desc"));
+        const snap = await getDocs(q);
+
+        let html = `
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Prachuu</th>
+              <th>Aaryann</th>
+              <th>% Prachuu</th>
+              <th>% Aaryann</th>
+            </tr>
+          </thead>
+          <tbody>
+        `;
+
+        snap.forEach(docSnap => {
+          const d = docSnap.data();
+          html += `
+            <tr>
+              <td>${d.date ?? "-"}</td>
+              <td>${d.prachuu ?? 0}</td>
+              <td>${d.aaryann ?? 0}</td>
+              <td>${d.completedP ?? 0}%</td>
+              <td>${d.completedA ?? 0}%</td>
+            </tr>
+          `;
+        });
+
+        html += `</tbody>`;
+        document.getElementById("historyTable").innerHTML = html;
+      } catch (err) {
+        console.error("loadHistory failed:", err);
+      }
+    }
+
+    // ---------- BUTTONS (UI actions) ----------
+    window.addWater1 = async () => {
+      if (cups1 < maxCups) cups1++;
+      update1();
+      await saveCount("prachuu", cups1);
+    };
+
+    window.removeWater1 = async () => {
+      if (cups1 > 0) cups1--;
+      update1();
+      await saveCount("prachuu", cups1);
+    };
+
+    window.addWater2 = async () => {
+      if (cups2 < maxCups) cups2++;
+      update2();
+      await saveCount("aaryann", cups2);
+    };
+
+    window.removeWater2 = async () => {
+      if (cups2 > 0) cups2--;
+      update2();
+      await saveCount("aaryann", cups2);
+    };
+
+    // ---------- MIDNIGHT SAVE & RESET ----------
+    function scheduleMidnightReset() {
+      const now = new Date();
+      const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 2);
+      const ms = nextMidnight - now;
+      setTimeout(async () => {
+        try {
+          // Save today's snapshot to history
+          await saveDailyHistory();
+
+          // Reset counters
+          cups1 = 0;
+          cups2 = 0;
+
+          // Update today's current docs (so UI and DB are in sync)
+          await saveCount("prachuu", 0);
+          await saveCount("aaryann", 0);
+
+          update1();
+          update2();
+
+          // Refresh the history table
+          await loadHistory();
+        } catch (err) {
+          console.error("Midnight save/reset error:", err);
         }
 
-        function update2() {
-            document.getElementById("progress2").textContent = `${cups2} / ${maxCups} glasses`;
-            const plant = document.getElementById("plant2");
-            if (cups2 <= 1) plant.textContent = "🌱";
-            else if (cups2 <= 4) plant.textContent = "🌿";
-            else if (cups2 <= 7) plant.textContent = "🌳";
-            else plant.textContent = "🌸";
-        }
+        // schedule next day's reset
+        scheduleMidnightReset();
+      }, ms);
+    }
 
-        async function loadCounts() {
-            for (let user of users) {
-                const docRef = doc(db, "users", user, "water", todayStr());
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    if (user === "prachuu") cups1 = docSnap.data().count;
-                    else cups2 = docSnap.data().count;
-                } else {
-                    await setDoc(docRef, { count: 0, date: todayStr() });
-                }
-            }
-            update1();
-            update2();
-        }
+    // ---------- MANUAL TEST HELPERS ----------
+    window.manualSaveAndReset = async () => {
+      await saveDailyHistory();
+      cups1 = 0; cups2 = 0;
+      await saveCount("prachuu", 0);
+      await saveCount("aaryann", 0);
+      update1(); update2();
+      await loadHistory();
+      console.log("manualSaveAndReset done");
+    };
 
-        async function saveCount(user, count) {
-            const docRef = doc(db, "users", user, "water", todayStr());
-            await setDoc(docRef, { count: count, date: todayStr() });
-        }
+    window.manualSave = async () => {
+      await saveDailyHistory();
+      await loadHistory();
+      console.log("manualSave done");
+    };
 
-        window.addWater1 = async () => {
-            if (cups1 < maxCups) cups1++;
-            update1();
-            await saveCount("prachuu", cups1);
-        };
+    // ---------- INIT: wait for auth then initialize ----------
+    async function initAfterAuth() {
+      await loadCounts();
+      await loadHistory();
+      scheduleMidnightReset();
+    }
 
-        window.removeWater1 = async () => {
-            if (cups1 > 0) cups1--;
-            update1();
-            await saveCount("prachuu", cups1);
-        };
-
-        window.addWater2 = async () => {
-            if (cups2 < maxCups) cups2++;
-            update2();
-            await saveCount("aaryann", cups2);
-        };
-
-        window.removeWater2 = async () => {
-            if (cups2 > 0) cups2--;
-            update2();
-            await saveCount("aaryann", cups2);
-        };
-
-        await loadCounts();
-    </script>
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        // signed in (anonymous)
+        initAfterAuth().catch(err => console.error("init failed:", err));
+      } else {
+        // Not signed in yet — sign-in attempted above; but we handle gracefully
+        console.log("No auth user yet");
+      }
+    });
+  </script>
 
 </body>
 
