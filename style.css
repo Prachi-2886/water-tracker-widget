@@ -1,8 +1,7 @@
-/* GENERAL BODY */
 body {
   font-family: "Poppins", sans-serif;
   padding: 20px;
-  background: #0c1f18; /* dark green-black */
+  background: #0c1f18;
   color: white;
   display: flex;
   flex-direction: column;
@@ -10,24 +9,22 @@ body {
   gap: 18px;
 }
 
-/* CARD STYLING */
 .card {
   display: flex;
   align-items: center;
-  background: #153b2b; /* dark green card */
+  background: #153b2b;
   border-radius: 18px;
   padding: 16px 20px;
   width: 300px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.45);
   gap: 18px;
 }
 
-/* PLANT ICON */
 .plant {
   font-size: 60px;
+  transition: transform 0.3s;
 }
 
-/* TEXT WRAP FOR CENTERING */
 .text-wrap {
   text-align: center;
   width: 100%;
@@ -39,7 +36,6 @@ body {
   font-weight: 600;
 }
 
-/* PROGRESS TEXT */
 .progressText {
   margin: 4px 0 10px;
   font-size: 19px;
@@ -48,7 +44,6 @@ body {
   text-align: center;
 }
 
-/* COUNTER BUTTONS */
 .counter-box {
   display: flex;
   justify-content: center;
@@ -62,17 +57,15 @@ body {
   border-radius: 10px;
   cursor: pointer;
   font-weight: 700;
-  transition: transform 0.1s ease;
 }
 
-/* GREEN BUTTON SHADES */
 .btn-green-light {
-  background: #b8f5c2; /* lighter green */
+  background: #a7f3d0;
   color: #0c1f18;
 }
 
 .btn-green-dark {
-  background: #4ad68a; /* darker green */
+  background: #22c55e;
   color: #0c1f18;
 }
 
@@ -80,7 +73,48 @@ body {
   transform: translateY(-2px);
 }
 
-/* HISTORY TABLE */
+/* bubble animation */
+#bubble-container {
+  position: absolute;
+  pointer-events: none;
+}
+
+.bubble {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: rgba(74, 214, 138, 0.8);
+  border-radius: 50%;
+  animation: rise 1s ease-out forwards;
+}
+
+@keyframes rise {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-60px) scale(0.5); opacity: 0; }
+}
+
+/* helper buttons gradient */
+.helpers {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.helper-btn {
+  background: linear-gradient(135deg, #6ee7b7, #3b82f6);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.helper-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
 .history-wrap {
   width: 90%;
   max-width: 720px;
@@ -96,48 +130,7 @@ body {
   text-align: center;
 }
 
-#historyTable th,
-#historyTable td {
-  padding: 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-/* HELPER BUTTONS */
-.helpers {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.helper-btn {
-  background: transparent;
-  border: 1px solid rgba(232, 255, 231, 0.12);
-  padding: 6px 10px;
-  border-radius: 8px;
-  cursor: pointer;
-  color: #e8ffe7;
-}
-
-.helper-btn:hover {
-  background: rgba(232, 255, 231, 0.03);
-}
-
-/* HISTORY TITLE */
 .history-title {
   margin-top: 20px;
   color: #e8ffe7;
-}
-
-/* RESPONSIVE FOR MOBILE */
-@media (max-width: 420px) {
-  .card {
-    width: 92%;
-    padding: 14px;
-  }
-  .plant {
-    font-size: 48px;
-  }
-  .progressText {
-    font-size: 17px;
-  }
 }
