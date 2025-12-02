@@ -63,29 +63,32 @@ body {
   gap: 12px;
 }
 
+/* BUTTONS */
 .btn {
   border: none;
   font-size: 20px;
-  padding: 6px 14px;
-  border-radius: 10px;
+  padding: 8px 16px;
+  border-radius: 12px;
   cursor: pointer;
   font-weight: 700;
+  color: #fff;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
+/* Dark green → mint green gradient */
 .btn-green-light {
-  background: #a7f3d0;
-  color: #0c1f18;
+  background: linear-gradient(135deg, #22c55e, #a7f3d0);
 }
 
 .btn-green-dark {
-  background: #166534; /* darker green */
-  color: #d1fae5; /* faded mint */
-  background: linear-gradient(135deg, #166534, #a7f3d0);
+  background: linear-gradient(135deg, #166534, #22c55e);
 }
 
 .btn:hover {
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
+
 
 /* bubble animation */
 #bubble-container {
