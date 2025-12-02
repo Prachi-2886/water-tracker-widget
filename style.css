@@ -71,7 +71,7 @@ body {
   border-radius: 12px;
   cursor: pointer;
   font-weight: 700;
-  color: #000;
+  color: #fff;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -127,13 +127,14 @@ body {
 }
 
 .helper-btn {
-  background: linear-gradient(135deg, #064e3b, #a7f3d0); /* dark green → faded mint */
+  background: linear-gradient(135deg, #064e3b, #159a5d); /* dark green → faded mint */
   color: white;
   border: none;
   padding: 6px 12px;
   border-radius: 10px;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
+  font-weight: 700;
 }
 
 .helper-btn:hover {
