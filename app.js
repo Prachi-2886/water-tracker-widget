@@ -99,22 +99,29 @@ function createBubble(button) {
 }
 
 // BUTTONS
-function addPlusMinusListeners(plusId, minusId, name, cupVar) {
-  document.getElementById(plusId).addEventListener("click", async (e) => {
-    if (window[cupVar] < maxCups) window[cupVar]++;
+function addPlusMinusListeners(plusId, minusId, cupVarName, name) {
+  const plusBtn = document.getElementById(plusId);
+  const minusBtn = document.getElementById(minusId);
+
+  plusBtn.addEventListener("click", async (e) => {
+    if (cupVarName === "cups1" && cups1 < maxCups) cups1++;
+    if (cupVarName === "cups2" && cups2 < maxCups) cups2++;
     updateUI();
-    await saveCount(name, window[cupVar]);
+    await saveCount(name, cupVarName === "cups1" ? cups1 : cups2);
     createBubble(e.target);
   });
-  document.getElementById(minusId).addEventListener("click", async () => {
-    if (window[cupVar] > 0) window[cupVar]--;
+
+  minusBtn.addEventListener("click", async () => {
+    if (cupVarName === "cups1" && cups1 > 0) cups1--;
+    if (cupVarName === "cups2" && cups2 > 0) cups2--;
     updateUI();
-    await saveCount(name, window[cupVar]);
+    await saveCount(name, cupVarName === "cups1" ? cups1 : cups2);
   });
 }
 
-addPlusMinusListeners("plus1", "minus1", "prachuu", "cups1");
-addPlusMinusListeners("plus2", "minus2", "aaryann", "cups2");
+addPlusMinusListeners("plus1", "minus1", "cups1", "prachuu");
+addPlusMinusListeners("plus2", "minus2", "cups2", "aaryann");
+
 
 document.getElementById("saveBtn").addEventListener("click", async () => { await saveHistory(); await loadHistory(); });
 document.getElementById("saveResetBtn").addEventListener("click", async () => { await saveHistory(); cups1=cups2=0; await saveCount("prachuu",0); await saveCount("aaryann",0); updateUI(); await loadHistory(); });
