@@ -92,17 +92,29 @@ function createBubble(button) {
   const bubble = document.createElement("div");
   bubble.className = "bubble";
   const rect = button.getBoundingClientRect();
-  bubble.style.left = rect.left + rect.width/2 + "px";
-  bubble.style.top = rect.top + "px";
+  bubble.style.left = rect.left + rect.width / 2 - 6 + window.scrollX + "px"; // center bubble
+  bubble.style.top = rect.top - 6 + window.scrollY + "px";
   document.body.appendChild(bubble);
   setTimeout(() => bubble.remove(), 1000);
 }
 
 // BUTTONS
-document.getElementById("plus1").addEventListener("click", async (e) => { if(cups1<maxCups) cups1++; updateUI(); saveCount("prachuu",cups1); createBubble(e.target); });
-document.getElementById("minus1").addEventListener("click", async () => { if(cups1>0) cups1--; updateUI(); saveCount("prachuu",cups1); });
-document.getElementById("plus2").addEventListener("click", async (e) => { if(cups2<maxCups) cups2++; updateUI(); saveCount("aaryann",cups2); createBubble(e.target); });
-document.getElementById("minus2").addEventListener("click", async () => { if(cups2>0) cups2--; updateUI(); saveCount("aaryann",cups2); });
+function addPlusMinusListeners(plusId, minusId, name, cupVar) {
+  document.getElementById(plusId).addEventListener("click", async (e) => {
+    if (window[cupVar] < maxCups) window[cupVar]++;
+    updateUI();
+    await saveCount(name, window[cupVar]);
+    createBubble(e.target);
+  });
+  document.getElementById(minusId).addEventListener("click", async () => {
+    if (window[cupVar] > 0) window[cupVar]--;
+    updateUI();
+    await saveCount(name, window[cupVar]);
+  });
+}
+
+addPlusMinusListeners("plus1", "minus1", "prachuu", "cups1");
+addPlusMinusListeners("plus2", "minus2", "aaryann", "cups2");
 
 document.getElementById("saveBtn").addEventListener("click", async () => { await saveHistory(); await loadHistory(); });
 document.getElementById("saveResetBtn").addEventListener("click", async () => { await saveHistory(); cups1=cups2=0; await saveCount("prachuu",0); await saveCount("aaryann",0); updateUI(); await loadHistory(); });
