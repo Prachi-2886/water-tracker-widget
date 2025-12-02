@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>H2O Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- PRACHUU -->
+  <div class="card">
+    <div id="plant1" class="plant">🌱</div>
+    <div class="text-wrap">
+      <h2 class="name-title">✨•°Prachuu°•✨</h2>
+      <p id="progress1" class="progressText">0 / 14 glasses</p>
+      <div class="counter-box">
+        <button id="minus1" class="btn btn-green-light">−</button>
+        <button id="plus1" class="btn btn-green-dark">+</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AARYANN -->
+  <div class="card">
+    <div id="plant2" class="plant">🌱</div>
+    <div class="text-wrap">
+      <h2 class="name-title">🍀•Aaryann•🍀</h2>
+      <p id="progress2" class="progressText">0 / 14 glasses</p>
+      <div class="counter-box">
+        <button id="minus2" class="btn btn-green-light">−</button>
+        <button id="plus2" class="btn btn-green-dark">+</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORY BUTTONS -->
+  <div class="helpers">
+    <button id="saveBtn" class="helper-btn">Save today</button>
+    <button id="saveResetBtn" class="helper-btn">Save & Reset</button>
+    <button id="historyBtn" class="helper-btn">Refresh History</button>
+  </div>
+
+  <!-- HISTORY TABLE -->
+  <h2 class="history-title">📅 Water Intake History</h2>
+  <div class="history-wrap">
+    <table id="historyTable"></table>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
